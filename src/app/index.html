@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generator</title>
+    <meta name="description" content="Generate memes with AI using inspired design">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #4285f4;
+            --primary-purple: #9c27b0;
+            --secondary-blue: #1a73e8;
+            --secondary-purple: #673ab7;
+            --success-green: #34a853;
+            --warning-orange: #fbbc04;
+            --error-red: #ea4335;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --surface: #ffffff;
+            --surface-variant: #f8f9fa;
+            --outline: #dadce0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --shadow-strong: rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container__image {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container__text {
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 300;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .input-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .main-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            font-size: 1.125rem;
+            border: 2px solid var(--outline);
+            border-radius: 16px;
+            background: var(--surface);
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .main-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 
+                0 0 0 4px rgba(66, 133, 244, 0.1),
+                0 2px 8px rgba(66, 133, 244, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .main-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .generate-btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: white;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 16px rgba(66, 133, 244, 0.3);
+            font-family: inherit;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(66, 133, 244, 0.4);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reset-btn {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--surface-variant);
+            border: 2px solid var(--outline);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+
+        .reset-btn:hover {
+            background: var(--outline);
+            transform: translateY(-1px);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-error {
+            background: rgba(234, 67, 53, 0.1);
+            border: 1px solid rgba(234, 67, 53, 0.2);
+            color: var(--error-red);
+        }
+
+        .alert-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .loading-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .loading-spinner {
+            width: 64px;
+            height: 64px;
+            border: 4px solid var(--outline);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        .loading-text {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .image-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .image-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .image-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .image-prompt {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            background: var(--surface-variant);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-container__item {
+            display: grid;
+            grid-template-columns: 50% 50%;
+        }
+
+        .generated-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .generated-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .download-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--primary-blue);
+            background: rgba(66, 133, 244, 0.1);
+            border: 2px solid rgba(66, 133, 244, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: inherit;
+        }
+
+        .download-btn:hover {
+            background: rgba(66, 133, 244, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container__text {
+                font-size: 0.8rem;
+                padding: 0.8rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.125rem;
+            }
+
+            .main-card {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .generate-btn {
+                flex: none;
+            }
+
+            .loading-card {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .main-input {
+                font-size: 1rem;
+                padding: 0.875rem 1rem;
+            }
+
+            .generate-btn {
+                font-size: 1rem;
+                padding: 0.875rem 1.5rem;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Pooh Meme Generator</h1>
+            <p class="subtitle"></p>
+        </header>
+
+        <main>
+            <div class="main-card">
+                <form id="imageForm" class="input-section">
+                    <label for="promptInput" class="input-label">
+                        Initial text for your meme
+                    </label>
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            id="promptInput" 
+                            class="main-input"
+                            placeholder="A simple yet funny pharse..."
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
+                    
+                    <div class="button-container">
+                        <button type="submit" id="generateBtn" class="generate-btn">
+                            <span class="btn-text">Generate Image</span>
+                            <div class="spinner hidden"></div>
+                        </button>
+                        
+                        <button type="button" id="resetBtn" class="reset-btn hidden">
+                            Reset
+                        </button>
+                    </div>
+                </form>
+
+                <div id="errorAlert" class="alert alert-error hidden" role="alert">
+                    <svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+
+            <div id="loadingCard" class="loading-card hidden">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Creating your masterpiece...</p>
+                <p class="loading-subtext">This may take a few moments</p>
+            </div>
+
+            <div id="imageCard" class="image-card hidden">
+                
+                <div class="image-container">
+                    <div class="image-container__item">
+                        <img class="container__image" src="https://poohtext.s3.us-east-1.amazonaws.com/simple.jpg">
+                        <span class="container__text" id="phrase-simple"></span>
+                    </div>
+                    <div class="image-container__item">
+                        <img class="container__image" src="https://poohtext.s3.us-east-1.amazonaws.com/complex.jpg">
+                        <span class="container__text" id="phrase-complex"></span>
+                    </div>
+                    <div class="image-container__item">
+                        <img class="container__image" src="https://poohtext.s3.us-east-1.amazonaws.com/sophisticated.jpg">
+                        <span class="container__text" id="phrase-sophisticated"></span>
+                    </div>
+                </div>
+                
+                <!-- <div class="image-actions">
+                    <button id="downloadBtn" class="download-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        Download Image
+                    </button>
+                </div> -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        class MemeGenerator {
+            constructor() {
+                this.initializeElements()
+                this.bindEvents()
+                this.currentImageUrl = null
+                this.isGenerating = false
+            }
+
+            initializeElements() {
+                // Form elements
+                this.form = document.getElementById('imageForm')
+                this.promptInput = document.getElementById('promptInput')
+                this.generateBtn = document.getElementById('generateBtn')
+                this.resetBtn = document.getElementById('resetBtn')
+                this.btnText = this.generateBtn.querySelector('.btn-text')
+                this.spinner = this.generateBtn.querySelector('.spinner')
+
+                // Alert elements
+                this.errorAlert = document.getElementById('errorAlert')
+                this.errorMessage = document.getElementById('errorMessage')
+
+                // Card elements
+                this.loadingCard = document.getElementById('loadingCard')
+                this.imageCard = document.getElementById('imageCard')
+                this.generatedImage = document.getElementById('generatedImage')
+                this.imagePrompt = document.getElementById('imagePrompt')
+                this.downloadBtn = document.getElementById('downloadBtn')
+            }
+
+            bindEvents() {
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e))
+                this.resetBtn.addEventListener('click', () => this.handleReset())
+                this.downloadBtn.addEventListener('click', () => this.handleDownload())
+                this.promptInput.addEventListener('input', () => this.clearError())
+                this.promptInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        this.form.requestSubmit()
+                    }
+                })
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault()
+
+                if (this.isGenerating) return
+
+                const prompt = this.promptInput.value.trim()
+                if (!prompt) {
+                    this.showError('Please enter a description for your image')
+                    this.promptInput.focus()
+                    return
+                }
+
+                if (prompt.length < 3) {
+                    this.showError('Please provide a more detailed description')
+                    this.promptInput.focus()
+                    return
+                }
+
+                this.setLoadingState(true)
+                this.clearError()
+                this.hideImageCard()
+
+                try {
+                    const response = await this.generateImage(prompt)
+                    const data = await response.json();
+
+                    // const data = {"input_text": "dfsgedrf", "generated_text": "{\n\"simple\": \"Pooh pensando: 'Dfsgedrf? Que diabos \u00e9 isso?'\",\n\"complex\": \"Pooh, com semblante estoico, reflete sobre o enigm\u00e1tico 'dfsgedrf', cuja profunda resson\u00e2ncia etimol\u00f3gica o instiga a desvendar os mist\u00e9rios inscritos nessa estranha locu\u00e7\u00e3o.\",\n\"sophisticated\": \"No \u00edntimo de seu ser, a psique do ilustre Ursinho Pooh \u00e9 sacudida por indiz\u00edveis paroxismos metaf\u00edsicos ao se defrontar com a inef\u00e1vel express\u00e3o 'dfsgedrf', cujo significado, oculto por tr\u00e1s de um biombo de s\u00edmbolos inescrut\u00e1veis, permanece um sublime desafio \u00e0 sua l\u00facida percep\u00e7\u00e3o da realidade fenomenol\u00f3gica que o circunda.\"\n}"}
+                    const phrases = JSON.parse(data.generated_text);
+
+
+                    // if (!response.ok) {
+                    //     const errorText = await response.text().catch(() => 'Unknown error')
+                    //     throw new Error(`Request failed (${response.status}): ${errorText}`)
+                    // }
+
+                    // const contentType = response.headers.get('content-type')
+                    // if (!contentType || !contentType.includes('image')) {
+                    //     throw new Error('Server did not return a valid image')
+                    // }
+
+                    // const blob = await response.blob()
+                    
+                    // // Validate that it's actually an image
+                    // if (!blob.type.startsWith('image/')) {
+                    //     throw new Error('Response is not a valid image file')
+                    // }
+
+                    // const imageUrl = URL.createObjectURL(blob)
+                    // await this.validateImage(imageUrl)
+                    
+                    this.displayImage(phrases)
+                    // this.currentImageUrl = imageUrl
+
+                } catch (error) {
+                    console.error('Image generation error:', error)
+                    this.showError(this.getErrorMessage(error))
+                } finally {
+                    this.setLoadingState(false)
+                }
+            }
+
+            async generateImage(prompt) {
+         
+                const apiUrl = 'https://999999999999999999.execute-api.us-east-1.amazonaws.com/default/PoohText'
+                return fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "prompt": prompt
+                    })
+                })
+
+            }
+
+            async validateImage(imageUrl) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image()
+                    img.onload = () => resolve()
+                    img.onerror = () => reject(new Error('Failed to load generated image'))
+                    img.src = imageUrl
+                })
+            }
+
+            hashCode(str) {
+                let hash = 0
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i)
+                    hash = ((hash << 5) - hash) + char
+                    hash = hash & hash // Convert to 32-bit integer
+                }
+                return Math.abs(hash)
+            }
+
+            setLoadingState(isLoading) {
+                this.isGenerating = isLoading
+                
+                if (isLoading) {
+                    this.generateBtn.disabled = true
+                    this.promptInput.disabled = true
+                    this.btnText.textContent = 'Generating...'
+                    this.spinner.classList.remove('hidden')
+                    this.loadingCard.classList.remove('hidden')
+                    
+                    // Add subtle animation to the input
+                    this.promptInput.style.animation = 'pulse 2s infinite'
+                } else {
+                    this.generateBtn.disabled = false
+                    this.promptInput.disabled = false
+                    this.btnText.textContent = 'Generate Image'
+                    this.spinner.classList.add('hidden')
+                    this.loadingCard.classList.add('hidden')
+                    
+                    // Remove animation
+                    this.promptInput.style.animation = ''
+                }
+            }
+
+            displayImage(phrases) {
+                document.getElementById('phrase-simple').innerText = phrases.simple;
+                document.getElementById('phrase-complex').innerText = phrases.complex;
+                document.getElementById('phrase-sophisticated').innerText = phrases.sophisticated;
+                // this.generatedImage.src = imageUrl
+                // this.generatedImage.alt = `AI generated image: ${prompt}`
+                // this.imagePrompt.textContent = `"${prompt}"`
+                
+                // Smooth reveal animation
+                this.imageCard.classList.remove('hidden')
+                this.resetBtn.classList.remove('hidden')
+                
+                // Scroll to image smoothly
+                setTimeout(() => {
+                    this.imageCard.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    })
+                }, 100)
+            }
+
+            hideImageCard() {
+                this.imageCard.classList.add('hidden')
+                if (this.currentImageUrl) {
+                    URL.revokeObjectURL(this.currentImageUrl)
+                    this.currentImageUrl = null
+                }
+            }
+
+            handleReset() {
+                this.promptInput.value = ''
+                this.hideImageCard()
+                this.clearError()
+                this.resetBtn.classList.add('hidden')
+                this.promptInput.focus()
+                
+                // Smooth scroll back to top
+                this.form.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                })
+            }
+
+            async handleDownload() {
+                if (!this.currentImageUrl) return
+
+                try {
+                    const response = await fetch(this.currentImageUrl)
+                    const blob = await response.blob()
+                    
+                    const link = document.createElement('a')
+                    link.href = URL.createObjectURL(blob)
+                    link.download = `generated-${Date.now()}.png`
+                    
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                    
+                    // Clean up the temporary URL
+                    URL.revokeObjectURL(link.href)
+                    
+                } catch (error) {
+                    console.error('Download error:', error)
+                    this.showError('Failed to download image. Please try again.')
+                }
+            }
+
+            showError(message) {
+                this.errorMessage.textContent = message
+                this.errorAlert.classList.remove('hidden')
+                
+                // Auto-hide error after 5 seconds
+                setTimeout(() => {
+                    this.clearError()
+                }, 5000)
+            }
+
+            clearError() {
+                this.errorAlert.classList.add('hidden')
+                this.errorMessage.textContent = ''
+            }
+
+            getErrorMessage(error) {
+                const message = error.message.toLowerCase()
+                
+                if (message.includes('network') || message.includes('fetch')) {
+                    return 'Network error. Please check your connection and try again.'
+                } else if (message.includes('timeout')) {
+                    return 'Request timed out. Please try again.'
+                } else if (message.includes('401') || message.includes('unauthorized')) {
+                    return 'Authentication failed. Please check your API key.'
+                } else if (message.includes('429') || message.includes('rate limit')) {
+                    return 'Too many requests. Please wait a moment and try again.'
+                } else if (message.includes('500') || message.includes('server')) {
+                    return 'Server error. Please try again later.'
+                } else {
+                    return error.message || 'An unexpected error occurred. Please try again.'
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new MemeGenerator()
+        })
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            const images = document.querySelectorAll('img[src^="blob:"]')
+            images.forEach(img => {
+                URL.revokeObjectURL(img.src)
+            })
+        })
+
+        // Add some interactive sparkle effects
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.98) {
+                createSparkle(e.clientX, e.clientY)
+            }
+        })
+
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div')
+            sparkle.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                width: 4px;
+                height: 4px;
+                background: linear-gradient(45deg, #4285f4, #9c27b0);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 1000;
+                animation: sparkleAnimation 1s ease-out forwards;
+            `
+            
+            document.body.appendChild(sparkle)
+            
+            setTimeout(() => {
+                sparkle.remove()
+            }, 1000)
+        }
+
+        // Add sparkle animation
+        const sparkleStyle = document.createElement('style')
+        sparkleStyle.textContent = `
+            @keyframes sparkleAnimation {
+                0% {
+                    opacity: 1;
+                    transform: scale(0) rotate(0deg);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1) rotate(180deg);
+                }
+                100% {
+                    opacity: 0;
+                    transform: scale(0) rotate(360deg);
+                }
+            }
+        `
+        document.head.appendChild(sparkleStyle)
+    </script>
+</body>
+</html>

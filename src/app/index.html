@@ -631,29 +631,7 @@
                     // const data = {"input_text": "dfsgedrf", "generated_text": "{\n\"simple\": \"Pooh pensando: 'Dfsgedrf? Que diabos \u00e9 isso?'\",\n\"complex\": \"Pooh, com semblante estoico, reflete sobre o enigm\u00e1tico 'dfsgedrf', cuja profunda resson\u00e2ncia etimol\u00f3gica o instiga a desvendar os mist\u00e9rios inscritos nessa estranha locu\u00e7\u00e3o.\",\n\"sophisticated\": \"No \u00edntimo de seu ser, a psique do ilustre Ursinho Pooh \u00e9 sacudida por indiz\u00edveis paroxismos metaf\u00edsicos ao se defrontar com a inef\u00e1vel express\u00e3o 'dfsgedrf', cujo significado, oculto por tr\u00e1s de um biombo de s\u00edmbolos inescrut\u00e1veis, permanece um sublime desafio \u00e0 sua l\u00facida percep\u00e7\u00e3o da realidade fenomenol\u00f3gica que o circunda.\"\n}"}
                     const phrases = JSON.parse(data.generated_text);
 
-
-                    // if (!response.ok) {
-                    //     const errorText = await response.text().catch(() => 'Unknown error')
-                    //     throw new Error(`Request failed (${response.status}): ${errorText}`)
-                    // }
-
-                    // const contentType = response.headers.get('content-type')
-                    // if (!contentType || !contentType.includes('image')) {
-                    //     throw new Error('Server did not return a valid image')
-                    // }
-
-                    // const blob = await response.blob()
-                    
-                    // // Validate that it's actually an image
-                    // if (!blob.type.startsWith('image/')) {
-                    //     throw new Error('Response is not a valid image file')
-                    // }
-
-                    // const imageUrl = URL.createObjectURL(blob)
-                    // await this.validateImage(imageUrl)
-                    
                     this.displayImage(phrases)
-                    // this.currentImageUrl = imageUrl
 
                 } catch (error) {
                     console.error('Image generation error:', error)

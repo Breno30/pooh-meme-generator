@@ -64,3 +64,12 @@ resource "aws_api_gateway_integration" "lambda_proxy" {
   uri                     = aws_lambda_function.example_function.invoke_arn
 }
 
+resource "aws_lambda_permission" "api_gateway_lambda_permission" {
+  statement_id  = "AllowAPIGatewayInvokeLambda"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.example_function.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.api_gateway_example.execution_arn}/*/*"
+}
+

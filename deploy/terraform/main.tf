@@ -37,7 +37,7 @@ resource "aws_lambda_function" "service_lambda_function" {
   filename      = "lambda.zip"
   function_name = "pooh-meme-lambda-function"
   role          = aws_iam_role.lambda_execution_role.arn
-  handler       = "index.lambda_handler"
+  handler       = "lambda.index.lambda_handler"
   runtime       = "python3.12"
 
   tags = {

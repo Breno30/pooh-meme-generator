@@ -20,6 +20,26 @@ resource "aws_iam_role" "lambda_execution_role" {
   }
 }
 
+resource "aws_iam_policy" "bedrock_invoke_policy" {
+  name        = "lambda-bedrock-invoke-policy"
+  description = "Allow Lambda to invoke Bedrock foundation models"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = "bedrock:InvokeModel",
+        Resource = "arn:aws:bedrock:*:*:foundation-model/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_attach_bedrock_policy" {
+  role       = aws_iam_role.lambda_execution_role.name
+  policy_arn = aws_iam_policy.bedrock_invoke_policy.arn
+}
+
 resource "aws_api_gateway_rest_api" "service_api_gateway" {
   body = jsonencode({
     openapi = "3.0.1"

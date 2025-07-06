@@ -9,15 +9,6 @@ def lambda_handler(event, context):
         'Access-Control-Allow-Methods': 'OPTIONS,POST'
     }
 
-    # return {
-    #     'statusCode': 200,
-    #     'headers': cors_headers, # Use the defined CORS headers
-    #     'body': json.dumps({
-    #         'input_text': 'que dia lindo',
-    #         'generated_text': '{\n\"simple\": \"Cara, que dia lindo pra ficar na cama o dia todo!\",\n\"complex\": \"Façamos das horas matutinas testemunhas da fruição dos esplendores naturais que hoje se descortinam ante nossos sentidos.\",\n\"sophisticated\": \"Proponho uma reflexão quanto ao inexorável fluxo da temporalidade em sua manifestação cíclica matinal, tomando como vestígio fenomenológico a suntuosa conjunção de atributos meteorológicos e luminosos que, em seu esplendor arrebatador, dão ensejo a uma contemplação sublime da grandiosidade do cosmos e da natureza mesma de nossa existência.\"\n}'
-    #     })
-    # }
-
     # --- 1. Parse the input string from the event ---
     # The input is expected to be a JSON string in the 'body' of the event.
     try:

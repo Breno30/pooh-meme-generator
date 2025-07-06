@@ -40,6 +40,28 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': f'An error occurred while parsing the input: {str(e)}'})
         }
 
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('PoohText')
+
+    response = table.get_item(
+        Key={
+            'input_text': input_text
+        }
+    )
+
+    if response is not None and 'Item' in response:
+        item = response.get('Item')
+        generated_text = item.get('generated_text')
+
+        return {
+            'statusCode': 200,
+            'headers': cors_headers,
+            'body': json.dumps({
+                'input_text': input_text,
+                'generated_text': generated_text
+            }) 
+        }
+
     # --- 2. Invoke the Bedrock model ---
     # model_id = "anthropic.claude-3-sonnet-20240229-v1:0" # You can change this to your desired model ID
     model_id = "anthropic.claude-3-haiku-20240307-v1:0" # You can change this to your desired model ID

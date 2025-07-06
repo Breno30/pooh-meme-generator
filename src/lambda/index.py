@@ -130,6 +130,13 @@ def lambda_handler(event, context):
         # This is specific to Anthropic Claude.
         generated_text = response_body['content'][0]['text']
 
+        table.put_item(
+            Item={
+                'input_text': input_text,
+                'generated_text': generated_text
+            }
+        )
+
         # --- 4. Return the output ---
         return {
             'statusCode': 200,

@@ -566,6 +566,9 @@
                 this.bindEvents()
                 this.currentImageUrl = null
                 this.isGenerating = false
+                this.urlParams = new URLSearchParams(window.location.search)
+
+                document.getElementById('promptInput').value = this.urlParams.get('prompt')
             }
 
             initializeElements() {

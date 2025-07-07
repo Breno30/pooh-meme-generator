@@ -562,13 +562,11 @@
     <script>
         class MemeGenerator {
             constructor() {
+                this.urlParams = new URLSearchParams(window.location.search)
                 this.initializeElements()
                 this.bindEvents()
                 this.currentImageUrl = null
                 this.isGenerating = false
-                this.urlParams = new URLSearchParams(window.location.search)
-
-                document.getElementById('promptInput').value = this.urlParams.get('prompt')
             }
 
             initializeElements() {
@@ -603,6 +601,7 @@
                         this.form.requestSubmit()
                     }
                 })
+                this.promptInput.value = this.urlParams.get('prompt')
             }
 
             async handleSubmit(e) {

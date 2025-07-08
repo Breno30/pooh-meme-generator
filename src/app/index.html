@@ -562,6 +562,7 @@
     <script>
         class MemeGenerator {
             constructor() {
+                this.urlParams = new URLSearchParams(window.location.search)
                 this.initializeElements()
                 this.bindEvents()
                 this.currentImageUrl = null
@@ -586,13 +587,13 @@
                 this.imageCard = document.getElementById('imageCard')
                 this.generatedImage = document.getElementById('generatedImage')
                 this.imagePrompt = document.getElementById('imagePrompt')
-                this.downloadBtn = document.getElementById('downloadBtn')
+                // this.downloadBtn = document.getElementById('downloadBtn')
             }
 
             bindEvents() {
                 this.form.addEventListener('submit', (e) => this.handleSubmit(e))
                 this.resetBtn.addEventListener('click', () => this.handleReset())
-                this.downloadBtn.addEventListener('click', () => this.handleDownload())
+                // this.downloadBtn.addEventListener('click', () => this.handleDownload())
                 this.promptInput.addEventListener('input', () => this.clearError())
                 this.promptInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -600,6 +601,7 @@
                         this.form.requestSubmit()
                     }
                 })
+                this.promptInput.value = this.urlParams.get('prompt')
             }
 
             async handleSubmit(e) {

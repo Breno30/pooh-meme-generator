@@ -78,6 +78,13 @@ resource "aws_api_gateway_rest_api" "service_api_gateway" {
   description = "API Gateway for pooh meme generator"
 }
 
+# Archive lambda function code
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_file = "../../src/lambda/index.py"
+  output_path = "${path.module}/lambda.zip"
+}
+
 resource "aws_lambda_function" "service_lambda_function" {
   filename      = "lambda.zip"
   function_name = "pooh-meme-lambda-function"

@@ -1,8 +1,12 @@
 terraform {
   required_providers {
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = "~> 3.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
     }
   }
 }
@@ -106,6 +110,20 @@ resource "aws_lambda_permission" "api_gateway_invoke_lambda_permission" {
   source_arn = "${aws_api_gateway_rest_api.service_api_gateway.execution_arn}/*/*"
 }
 
+# Rendered HTML file
+resource "local_file" "index_html" {
+  filename = "index.html"
+
+  content = templatefile("../../src/app/index.html", {
+    lambda_function_endpoint = aws_api_gateway_integration.lambda_proxy_integration.rest_api_id
+  })
+}
+
+output "local_file" {
+  value = local_file.index_html.filename
+  sensitive = false
+}
+
 # S3
 resource "random_string" "bucket_name" {
   length           = 16
@@ -127,7 +145,7 @@ resource "aws_s3_bucket" "project_bucket" {
 resource "aws_s3_bucket_object" "object" {
   bucket = aws_s3_bucket.project_bucket.id
   key    = "index.html"
-  source = "../../src/app/index.html"
+  source = "./index.html"
   etag = filemd5("../../src/app/index.html")
 }
 

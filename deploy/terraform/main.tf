@@ -120,7 +120,7 @@ resource "local_file" "index_html" {
   filename = "index.html"
 
   content = templatefile("../../src/app/index.html", {
-    lambda_function_endpoint = aws_api_gateway_integration.lambda_proxy_integration.rest_api_id
+    lambda_function_endpoint = aws_lambda_function_url.lambda_function_url.function_url
   })
 }
 

@@ -35,7 +35,7 @@ resource "aws_iam_role" "lambda_execution_role" {
 
 resource "aws_iam_policy" "bedrock_invoke_policy" {
   name        = "lambda-bedrock-invoke-policy"
-  description = "Allow Lambda to invoke Bedrock foundation models"
+  description = "Allow Lambda to invoke Bedrock foundation models and access DynamoDB"
   policy      = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -43,6 +43,18 @@ resource "aws_iam_policy" "bedrock_invoke_policy" {
         Effect = "Allow",
         Action = "bedrock:InvokeModel",
         Resource = "arn:aws:bedrock:*:*:foundation-model/*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Scan",
+          "dynamodb:Query"
+        ],
+        Resource = "*"
       }
     ]
   })

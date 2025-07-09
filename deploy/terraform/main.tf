@@ -119,11 +119,6 @@ resource "local_file" "index_html" {
   })
 }
 
-output "local_file" {
-  value = local_file.index_html.filename
-  sensitive = false
-}
-
 # S3
 resource "random_string" "bucket_name" {
   length           = 16

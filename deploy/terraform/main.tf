@@ -134,3 +134,7 @@ resource "aws_s3_bucket_object" "object" {
 output "bucket_name" {
   value = aws_s3_bucket.project_bucket.id
 }
+
+output "lambda_function_endpoint" {
+  value = aws_api_gateway_integration.lambda_proxy_integration.rest_api_id
+}

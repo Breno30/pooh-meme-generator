@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    random = {
+      source = "hashicorp/random"
+      version = "~> 3.0"
+    }
+  }
+}
+
 resource "aws_iam_role" "lambda_execution_role" {
   name = "service-lambda-execution-role"
 
@@ -97,3 +106,27 @@ resource "aws_lambda_permission" "api_gateway_invoke_lambda_permission" {
   source_arn = "${aws_api_gateway_rest_api.service_api_gateway.execution_arn}/*/*"
 }
 
+# S3
+resource "random_string" "bucket_name" {
+  length           = 16
+  special          = false
+  upper            = false 
+  numeric          = true
+}
+
+resource "aws_s3_bucket" "project_bucket" {
+  bucket = "pooh-meme-${random_string.bucket_name.result}"
+  region = "us-east-1"
+
+  tags = {
+    Name        = "My bucket"
+    Environment = "Dev"
+  }
+}
+
+resource "aws_s3_bucket_object" "object" {
+  bucket = aws_s3_bucket.project_bucket.id
+  key    = "index.html"
+  source = "../../src/app/index.html"
+  etag = filemd5("../../src/app/index.html")
+}

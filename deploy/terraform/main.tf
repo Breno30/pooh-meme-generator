@@ -130,3 +130,7 @@ resource "aws_s3_bucket_object" "object" {
   source = "../../src/app/index.html"
   etag = filemd5("../../src/app/index.html")
 }
+
+output "bucket_name" {
+  value = aws_s3_bucket.project_bucket.id
+}

@@ -17,8 +17,12 @@ def lambda_handler(event, context):
             body = json.loads(event['body'])
             input_text = body.get('prompt', '')  # Use a key like 'prompt' for clarity
         else:
-            # If not in 'body', assume it's a direct string input
-            input_text = event.get('prompt', '')
+            if 'queryStringParameters' in event:
+                # If it's a GET request, parse the query string parameters
+                input_text = event.get('queryStringParameters').get('prompt', '')
+            else:
+                # If not in 'body', assume it's a direct string input
+                input_text = event.get('prompt', '')
 
         if not input_text:
             return {

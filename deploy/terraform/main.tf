@@ -110,6 +110,11 @@ resource "aws_lambda_permission" "api_gateway_invoke_lambda_permission" {
   source_arn = "${aws_api_gateway_rest_api.service_api_gateway.execution_arn}/*/*"
 }
 
+resource "aws_lambda_function_url" "lambda_function_url" {
+  function_name = aws_lambda_function.service_lambda_function.function_name
+  authorization_type = "NONE" 
+}
+
 # Rendered HTML file
 resource "local_file" "index_html" {
   filename = "index.html"

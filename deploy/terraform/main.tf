@@ -151,3 +151,7 @@ output "bucket_name" {
 output "lambda_function_endpoint" {
   value = aws_api_gateway_integration.lambda_proxy_integration.rest_api_id
 }
+
+output "lambda_function_url" {
+  value = aws_lambda_function_url.lambda_function_url.function_url
+}

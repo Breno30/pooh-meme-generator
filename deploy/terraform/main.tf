@@ -145,7 +145,7 @@ resource "aws_s3_bucket" "project_bucket" {
 resource "aws_s3_bucket_object" "object" {
   bucket = aws_s3_bucket.project_bucket.id
   key    = "index.html"
-  source = "./index.html"
+  source = "index.html"
   etag = filemd5("../../src/app/index.html")
 }
 

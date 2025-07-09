@@ -644,7 +644,7 @@
 
             async generateImage(prompt) {
          
-                const apiUrl = 'https://999999999999999999.execute-api.us-east-1.amazonaws.com/default/PoohText'
+                const apiUrl = '${lambda_function_endpoint}'
                 return fetch(apiUrl, {
                     method: 'POST',
                     headers: {

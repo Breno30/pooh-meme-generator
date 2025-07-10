@@ -153,6 +153,15 @@ resource "aws_s3_bucket_object" "object" {
   etag = filemd5("../../src/app/index.html")
 }
 
+resource "aws_s3_bucket_website_configuration" "project_website" {
+  bucket = aws_s3_bucket.project_bucket.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+}
+
 output "bucket_name" {
   value = aws_s3_bucket.project_bucket.id
 }

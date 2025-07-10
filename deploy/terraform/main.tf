@@ -147,6 +147,7 @@ resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
 }
 
 resource "aws_s3_bucket_object" "object" {
+  depends_on = [local_file.index_html]
   bucket = aws_s3_bucket.project_bucket.id
   key    = "index.html"
   source = "index.html"

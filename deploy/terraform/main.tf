@@ -78,6 +78,8 @@ resource "aws_lambda_function" "service_lambda_function" {
   role          = aws_iam_role.lambda_execution_role.arn
   handler       = "lambda.index.lambda_handler"
   runtime       = "python3.12"
+  memory_size   = 1024
+  timeout       = 10
 
   tags = {
     Project     = "PoohMeme"

@@ -120,6 +120,32 @@ resource "aws_s3_bucket" "project_bucket" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "public_access_block" {
+  bucket = aws_s3_bucket.project_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
+  bucket = aws_s3_bucket.project_bucket.id
+  depends_on = [aws_s3_bucket_public_access_block.public_access_block]
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect    = "Allow",
+        Principal = "*",
+        Action    = "s3:GetObject",
+        Resource  = "${aws_s3_bucket.project_bucket.arn}/*"
+      }
+    ]
+  })
+}
+
 resource "aws_s3_bucket_object" "object" {
   bucket = aws_s3_bucket.project_bucket.id
   key    = "index.html"

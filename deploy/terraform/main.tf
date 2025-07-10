@@ -169,3 +169,7 @@ output "bucket_name" {
 output "lambda_function_url" {
   value = aws_lambda_function_url.lambda_function_url.function_url
 }
+
+output "website_url" {
+  value = aws_s3_bucket_website_configuration.project_website.website_endpoint
+}

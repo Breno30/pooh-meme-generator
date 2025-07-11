@@ -154,6 +154,8 @@ resource "aws_s3_bucket_object" "object" {
   key    = "index.html"
   source = "index.html"
   etag = filemd5("../../src/app/index.html")
+  content_type = "text/html"
+  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_website_configuration" "project_website" {

@@ -45,7 +45,7 @@ def lambda_handler(event, context):
         }
 
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-    table = dynamodb.Table('PoohText')
+    table = dynamodb.Table('${table_name}')
 
     response = table.get_item(
         Key={

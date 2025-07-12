@@ -92,6 +92,14 @@ resource "aws_iam_role_policy_attachment" "lambda_attach_bedrock_policy" {
 }
 
 # Archive lambda function code
+resource "local_file" "lambda_code" {
+  filename = "index.py"
+
+  content = templatefile("../../src/lambda/index.py", {
+    table_name = aws_dynamodb_table.project_table.name
+  })
+}
+
 data "archive_file" "lambda" {
   type        = "zip"
   source_file = "../../src/lambda/index.py"

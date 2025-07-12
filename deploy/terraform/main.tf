@@ -180,6 +180,7 @@ resource "aws_s3_bucket_object" "images" {
   key          = "${each.key}.jpg"
   source       = each.value
   etag         = filemd5(each.value)
+  content_type = "image/jpeg"
   acl          = "public-read"
 }
 

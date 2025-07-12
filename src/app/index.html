@@ -644,9 +644,9 @@
 
             async generateImage(prompt) {
          
-                const apiUrl = '${lambda_function_endpoint}'
+                const apiUrl = '${lambda_function_endpoint}?prompt=' + prompt
                 return fetch(apiUrl, {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
                     }

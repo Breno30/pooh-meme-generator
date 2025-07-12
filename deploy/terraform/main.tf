@@ -26,6 +26,17 @@ resource "random_string" "project_hash" {
   numeric          = true
 }
 
+resource "aws_dynamodb_table" "project_table" {
+  name         = "pooh-text-${random_string.project_hash.result}"
+  attribute {
+    name = "input_text"
+    type = "S"
+  }
+  hash_key     = "input_text"
+  read_capacity  = 5
+  write_capacity = 5
+}
+
 resource "aws_iam_role" "lambda_execution_role" {
   name = "service-lambda-execution-role-${random_string.project_hash.result}"
 

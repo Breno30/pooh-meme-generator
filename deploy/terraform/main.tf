@@ -13,6 +13,7 @@ terraform {
       version = "~> 5.0"
     }
   }
+}
 
 resource "aws_iam_role" "lambda_execution_role" {
   name = "service-lambda-execution-role"

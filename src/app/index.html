@@ -746,7 +746,7 @@
                     
                     const link = document.createElement('a')
                     link.href = URL.createObjectURL(blob)
-                    link.download = `generated-${Date.now()}.png`
+                    link.download = `generated-` + Date.now() + `.png`
                     
                     document.body.appendChild(link)
                     link.click()

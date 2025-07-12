@@ -15,6 +15,10 @@ terraform {
   }
 }
 
+provider "aws" {
+  region = "us-east-1"
+}
+
 resource "aws_iam_role" "lambda_execution_role" {
   name = "service-lambda-execution-role"
 
@@ -117,7 +121,6 @@ resource "random_string" "bucket_name" {
 
 resource "aws_s3_bucket" "project_bucket" {
   bucket = "pooh-meme-${random_string.bucket_name.result}"
-  region = "us-east-1"
 
   tags = {
     Name        = "My bucket"

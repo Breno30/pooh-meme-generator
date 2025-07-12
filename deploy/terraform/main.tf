@@ -101,8 +101,9 @@ resource "local_file" "lambda_code" {
 }
 
 data "archive_file" "lambda" {
+  depends_on  = [local_file.lambda_code]
   type        = "zip"
-  source_file = "../../src/lambda/index.py"
+  source_file = "index.py"
   output_path = "${path.module}/lambda.zip"
 }
 

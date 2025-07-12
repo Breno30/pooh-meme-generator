@@ -19,8 +19,15 @@ provider "aws" {
   region = "us-east-1"
 }
 
+resource "random_string" "project_hash" {
+  length           = 16
+  special          = false
+  upper            = false 
+  numeric          = true
+}
+
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "service-lambda-execution-role"
+  name = "service-lambda-execution-role-${random_string.project_hash.result}"
 
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
@@ -42,7 +49,7 @@ resource "aws_iam_role" "lambda_execution_role" {
 }
 
 resource "aws_iam_policy" "bedrock_invoke_policy" {
-  name        = "lambda-bedrock-invoke-policy"
+  name        = "lambda-bedrock-invoke-policy-${random_string.project_hash.result}"
   description = "Allow Lambda to invoke Bedrock foundation models and access DynamoDB"
   policy      = jsonencode({
     Version = "2012-10-17",
@@ -112,15 +119,8 @@ resource "local_file" "index_html" {
 }
 
 # S3
-resource "random_string" "bucket_name" {
-  length           = 16
-  special          = false
-  upper            = false 
-  numeric          = true
-}
-
 resource "aws_s3_bucket" "project_bucket" {
-  bucket = "pooh-meme-${random_string.bucket_name.result}"
+  bucket = "pooh-meme-${random_string.project_hash.result}"
 
   tags = {
     Name        = "My bucket"

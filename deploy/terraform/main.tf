@@ -77,7 +77,7 @@ resource "aws_lambda_function" "service_lambda_function" {
   filename      = "lambda.zip"
   function_name = "pooh-meme-lambda-function"
   role          = aws_iam_role.lambda_execution_role.arn
-  handler       = "lambda.index.lambda_handler"
+  handler       = "index.lambda_handler"
   runtime       = "python3.12"
   memory_size   = 1024
   timeout       = 10

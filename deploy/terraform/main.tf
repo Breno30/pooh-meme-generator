@@ -17,6 +17,14 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
+
+  default_tags {
+    tags = {
+      Project     = "PoohMeme"
+      Environment = "Development"
+      ManagedBy   = "Terraform"
+    }
+  }
 }
 
 resource "random_string" "project_hash" {
@@ -52,11 +60,6 @@ resource "aws_iam_role" "lambda_execution_role" {
       }
     ]
   })
-
-  tags = {
-    Project     = "PoohMeme"
-    Environment = "Development"
-  }
 }
 
 resource "aws_iam_policy" "bedrock_invoke_policy" {
@@ -116,11 +119,6 @@ resource "aws_lambda_function" "service_lambda_function" {
   runtime       = "python3.12"
   memory_size   = 1024
   timeout       = 10
-
-  tags = {
-    Project     = "PoohMeme"
-    Environment = "Development"
-  }
 }
 
 
@@ -141,11 +139,6 @@ resource "local_file" "index_html" {
 # S3
 resource "aws_s3_bucket" "project_bucket" {
   bucket = "pooh-meme-${random_string.project_hash.result}"
-
-  tags = {
-    Name        = "My bucket"
-    Environment = "Dev"
-  }
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access_block" {

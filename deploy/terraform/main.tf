@@ -27,6 +27,15 @@ provider "aws" {
   }
 }
 
+locals {
+  project_hash_result    = random_string.project_hash.result
+  dynamodb_table_name    = "${var.project_name_prefix}-${local.project_hash_result}"
+  lambda_function_name   = "${var.project_name_prefix}-lambda-function-${local.project_hash_result}"
+  iam_role_name          = "service-lambda-execution-role-${local.project_hash_result}"
+  iam_policy_name        = "lambda-bedrock-invoke-policy-${local.project_hash_result}"
+  s3_bucket_name         = "${var.project_name_prefix}-${local.project_hash_result}"
+}
+
 resource "random_string" "project_hash" {
   length           = 16
   special          = false
@@ -35,7 +44,7 @@ resource "random_string" "project_hash" {
 }
 
 resource "aws_dynamodb_table" "project_table" {
-  name         = "pooh-text-${random_string.project_hash.result}"
+  name         = local.dynamodb_table_name
   attribute {
     name = "input_text"
     type = "S"
@@ -46,7 +55,7 @@ resource "aws_dynamodb_table" "project_table" {
 }
 
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "service-lambda-execution-role-${random_string.project_hash.result}"
+  name = local.iam_role_name
 
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
@@ -63,7 +72,7 @@ resource "aws_iam_role" "lambda_execution_role" {
 }
 
 resource "aws_iam_policy" "bedrock_invoke_policy" {
-  name        = "lambda-bedrock-invoke-policy-${random_string.project_hash.result}"
+  name        = local.iam_policy_name
   description = "Allow Lambda to invoke Bedrock foundation models and access DynamoDB"
   policy      = jsonencode({
     Version = "2012-10-17",
@@ -113,7 +122,7 @@ data "archive_file" "lambda" {
 resource "aws_lambda_function" "service_lambda_function" {
   depends_on = [data.archive_file.lambda]
   filename      = "lambda.zip"
-  function_name = "pooh-meme-lambda-function-${random_string.project_hash.result}"
+  function_name = local.lambda_function_name
   role          = aws_iam_role.lambda_execution_role.arn
   handler       = "index.lambda_handler"
   runtime       = "python3.12"
@@ -138,7 +147,7 @@ resource "local_file" "index_html" {
 
 # S3
 resource "aws_s3_bucket" "project_bucket" {
-  bucket = "pooh-meme-${random_string.project_hash.result}"
+  bucket = local.s3_bucket_name
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access_block" {

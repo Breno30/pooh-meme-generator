@@ -143,8 +143,8 @@ resource "aws_lambda_function" "service_lambda_function" {
   role          = aws_iam_role.lambda_execution_role.arn
   handler       = "index.lambda_handler"
   runtime       = "python3.12"
-  memory_size   = 1024
-  timeout       = 10
+  memory_size   = var.lambda_memory_size
+  timeout       = var.lambda_timeout
 }
 
 

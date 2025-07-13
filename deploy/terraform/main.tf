@@ -46,11 +46,11 @@ provider "aws" {
 
 locals {
   project_hash_result    = random_string.project_hash.result
-  dynamodb_table_name    = "${var.project_name_prefix}-${local.project_hash_result}"
-  lambda_function_name   = "${var.project_name_prefix}-lambda-function-${local.project_hash_result}"
+  dynamodb_table_name    = "${var.project_name}-${local.project_hash_result}"
+  lambda_function_name   = "${var.project_name}-lambda-function-${local.project_hash_result}"
   iam_role_name          = "service-lambda-execution-role-${local.project_hash_result}"
   iam_policy_name        = "lambda-bedrock-invoke-policy-${local.project_hash_result}"
-  s3_bucket_name         = "${var.project_name_prefix}-${local.project_hash_result}"
+  s3_bucket_name         = "${var.project_name}-${local.project_hash_result}"
 }
 
 resource "random_string" "project_hash" {

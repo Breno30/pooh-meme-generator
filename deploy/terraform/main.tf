@@ -103,11 +103,7 @@ resource "aws_iam_policy" "bedrock_invoke_policy" {
         Effect = "Allow",
         Action = [
           "dynamodb:PutItem",
-          "dynamodb:GetItem",
-          "dynamodb:UpdateItem",
-          "dynamodb:DeleteItem",
-          "dynamodb:Scan",
-          "dynamodb:Query"
+          "dynamodb:GetItem"
         ],
         Resource = aws_dynamodb_table.project_table.arn
       }

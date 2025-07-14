@@ -97,7 +97,7 @@ resource "aws_iam_policy" "bedrock_invoke_policy" {
       {
         Effect = "Allow",
         Action = "bedrock:InvokeModel",
-        Resource = "arn:aws:bedrock:*:*:foundation-model/*"
+        Resource = "arn:aws:bedrock:${var.aws_region}::foundation-model/*"
       },
       {
         Effect = "Allow",
@@ -109,7 +109,7 @@ resource "aws_iam_policy" "bedrock_invoke_policy" {
           "dynamodb:Scan",
           "dynamodb:Query"
         ],
-        Resource = "*"
+        Resource = aws_dynamodb_table.project_table.arn
       }
     ]
   })

@@ -1,13 +1,11 @@
 variable "aws_region" {
   description = "The AWS region where resources will be deployed (e.g., 'us-east-1')."
   type        = string
-  default     = "us-east-1"
 }
 
 variable "project_name" {
   description = "A unique name for the project, used as a prefix for naming resources (e.g., 'my-app')."
   type        = string
-  default     = "my-app"
 }
 
 variable "lambda_memory_size" {

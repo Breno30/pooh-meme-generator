@@ -67,14 +67,14 @@ def lambda_handler(event, context):
         }
 
     # --- 2. Invoke the Bedrock model ---
-    # model_id = "anthropic.claude-3-sonnet-20240229-v1:0" # You can change this to your desired model ID
-    model_id = "anthropic.claude-3-haiku-20240307-v1:0" # You can change this to your desired model ID
+    # model_id = "anthropic.claude-3-sonnet-20240229-v1:0"
+    model_id = "anthropic.claude-3-haiku-20240307-v1:0"
 
     # Create a Bedrock Runtime client
     try:
         bedrock_runtime_client = boto3.client(
             service_name='bedrock-runtime',
-            region_name='us-east-1' # Change to the region where your Bedrock model is available
+            region_name='us-east-1'
         )
     except Exception as e:
         return {

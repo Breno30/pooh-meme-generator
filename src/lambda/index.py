@@ -94,10 +94,7 @@ def lambda_handler(event, context):
                     {
                         "type": "text",
                         "text": f"""
-                        Baseado na frase '{input_text}', gere três versões com o exato mesmo significado, seguindo este padrão:
-
-                        Versão Simples (informal e direta):
-                        Gere uma frase casual e cotidiana
+                        Baseado na frase '{input_text}', gere duas versões com o exato mesmo significado, seguindo este padrão:
 
                         Versão Sofisticada (formal e elaborada):
                         Gere uma versão mais rebuscada e formal da mesma ideia
@@ -107,7 +104,7 @@ def lambda_handler(event, context):
 
                         Mantenha o tom humorístico e crescente em complexidade.
 
-                        o output deve ser um único json, sem mais nenhum texto ao redor, keys: simple, complex, sophisticated
+                        o output deve ser um único json, sem mais nenhum texto ao redor, keys: complex, sophisticated
                         """
                     }
                 ]

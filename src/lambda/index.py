@@ -94,17 +94,19 @@ def lambda_handler(event, context):
                     {
                         "type": "text",
                         "text": f"""
-                        Baseado na frase '{input_text}', gere duas versões com o exato mesmo significado, seguindo este padrão:
+                        Dada a frase original: '{input_text}', reescreva-a em duas versões crescentemente formais e cômicas, mantendo o mesmo significado:
 
-                        Versão Sofisticada (formal e elaborada):
-                        Gere uma versão mais rebuscada e formal da mesma ideia
+                        1. **"sophisticated"**:  
+                        Reformule a frase de maneira formal, elegante e levemente pomposa, como se estivesse tentando parecer sério e educado. Use vocabulário culto, mas ainda compreensível.
 
-                        Versão Exagerada (absurdamente formal/filosófica):
-                        Gere uma versão extremamente exagerada, pseudo-intelectual e cômica da mesma ideia
+                        2. **"complex"**:  
+                        Transforme a frase em algo deliberadamente exagerado, pseudo-filosófico, cheio de palavras longas, construções rebuscadas e um tom ridiculamente acadêmico. Pode parecer algo dito por alguém que estudou demais para justificar algo simples. Humor é essencial.
 
-                        Mantenha o tom humorístico e crescente em complexidade.
-
-                        o output deve ser um único json, sem mais nenhum texto ao redor, keys: complex, sophisticated
+                        **Importante:**  
+                        - Retorne apenas um objeto JSON com as chaves `"sophisticated"` e `"complex"`.  
+                        - Não inclua nenhum texto extra fora do JSON.  
+                        - Ambas as versões devem ter o exato mesmo significado da frase original.  
+                        - A complexidade e o tom absurdo devem escalar da primeira para a segunda versão.
                         """
                     }
                 ]

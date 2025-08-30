@@ -79,9 +79,9 @@ resource "aws_s3_bucket_object" "object" {
 
 resource "aws_s3_bucket_object" "images" {
   for_each = {
-    simple        = "../../src/app/simple.jpg"
-    complex       = "../../src/app/complex.jpg"
-    sophisticated = "../../src/app/sophisticated.jpg"
+    simple        = "../../src/app/images/simple.jpg"
+    complex       = "../../src/app/images/complex.jpg"
+    sophisticated = "../../src/app/images/sophisticated.jpg"
     main_script   = "../../src/app/js/main.js"
   }
   depends_on   = [local_file.index_html, aws_s3_bucket_ownership_controls.project_bucket_ownership]

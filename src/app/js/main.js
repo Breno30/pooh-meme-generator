@@ -81,7 +81,7 @@ class MemeGenerator {
 
     async generateImage(prompt) {
 
-        const apiUrl = '${lambda_function_endpoint}?prompt=' + prompt
+        const apiUrl = window.lambda_function_endpoint + '?prompt=' + prompt
         return fetch(apiUrl, {
             method: 'GET',
             headers: {

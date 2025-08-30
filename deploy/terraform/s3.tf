@@ -85,7 +85,7 @@ resource "aws_s3_bucket_object" "images" {
   }
   depends_on   = [local_file.index_html, aws_s3_bucket_ownership_controls.project_bucket_ownership]
   bucket       = aws_s3_bucket.project_bucket.id
-  key          = "${each.key}.jpg"
+  key          = "/images/${each.key}.jpg"
   source       = each.value
   etag         = filemd5(each.value)
   content_type = "image/jpeg"

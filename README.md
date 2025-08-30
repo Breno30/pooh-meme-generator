@@ -58,6 +58,7 @@ This project uses Terraform to manage and deploy its AWS infrastructure, includi
 
     Type `yes` when prompted to confirm the deployment.
 
+5. **Access the Deployed Website:** After the deployment is complete, Terraform will display the output values, including the URL of your new website. Copy the website_url from the output and paste it into your web browser to access your project.
 -----
 
 ## 🤝 Contributing

@@ -26,12 +26,14 @@ class MemeGenerator {
         this.generatedImage = document.getElementById('generatedImage')
         this.imagePrompt = document.getElementById('imagePrompt')
         this.downloadBtn = document.getElementById('downloadBtn')
+        this.copyUrlBtn = document.getElementById('copyUrlBtn')
     }
 
     bindEvents() {
         this.form.addEventListener('submit', (e) => this.handleSubmit(e))
         this.resetBtn.addEventListener('click', () => this.handleReset())
         this.downloadBtn.addEventListener('click', () => this.handleDownload())
+        this.copyUrlBtn.addEventListener('click', () => this.handleCopyUrl())
         this.promptInput.addEventListener('input', () => this.clearError())
         this.promptInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -156,6 +158,36 @@ class MemeGenerator {
             behavior: 'smooth',
             block: 'center'
         })
+    }
+
+    handleCopyUrl() {
+        const prompt = this.promptInput.value.trim();
+        if (!prompt) {
+            this.showError('Please enter a description to generate a URL');
+            this.promptInput.focus();
+            return;
+        }
+
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('prompt', prompt);
+
+        navigator.clipboard.writeText(currentUrl.toString()).then(() => {
+            this.copyUrlBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
+            </svg>
+            URL Copied!`;
+
+            setTimeout(() => {
+                this.copyUrlBtn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                </svg>
+                Copy URL
+                `
+            }, 2000)
+        })
+
     }
 
     async handleDownload() {

@@ -78,18 +78,14 @@ resource "aws_s3_bucket_object" "object" {
 }
 
 resource "aws_s3_bucket_object" "images" {
-  for_each = {
-    simple        = "../../src/app/images/simple.jpg"
-    complex       = "../../src/app/images/complex.jpg"
-    sophisticated = "../../src/app/images/sophisticated.jpg"
-  }
-  depends_on   = [local_file.index_html, aws_s3_bucket_ownership_controls.project_bucket_ownership]
-  bucket       = aws_s3_bucket.project_bucket.id
-  key          = "/images/${each.key}.jpg"
-  source       = each.value
-  etag         = filemd5(each.value)
+  for_each    = toset(["simple.jpg", "complex.jpg", "sophisticated.jpg"])
+  depends_on  = [aws_s3_bucket_ownership_controls.project_bucket_ownership]
+  bucket      = aws_s3_bucket.project_bucket.id
+  key         = "images/${each.value}"
+  source      = "../../src/app/images/${each.value}"
+  etag        = filemd5("../../src/app/images/${each.value}")
   content_type = "image/jpeg"
-  acl          = "public-read"
+  acl         = "public-read"
 }
 
 resource "aws_s3_bucket_website_configuration" "project_website" {

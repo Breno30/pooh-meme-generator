@@ -52,7 +52,7 @@ resource "aws_s3_bucket_object" "object" {
   bucket       = aws_s3_bucket.project_bucket.id
   key          = "js/main.js"
   source       = "js/main.js"
-  etag         = filemd5("js/main.js")
+  etag         = filemd5("../../src/app/js/main.js")
   content_type = "application/javascript"
   acl          = "public-read"
 }

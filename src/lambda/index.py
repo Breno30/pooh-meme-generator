@@ -96,14 +96,14 @@ def lambda_handler(event, context):
                         "text": f"""
                         Dada a frase original: '{input_text}', reescreva-a em duas versões crescentemente formais e cômicas, mantendo o mesmo significado:
 
-                        1. **"sophisticated"**:  
+                        1. **"complex"**:  
                         Reformule a frase de maneira formal, elegante e levemente pomposa, como se estivesse tentando parecer sério e educado. Use vocabulário culto, mas ainda compreensível.
 
-                        2. **"complex"**:  
+                        2. **"sophisticated"**:  
                         Transforme a frase em algo deliberadamente exagerado, pseudo-filosófico, cheio de palavras longas, construções rebuscadas e um tom ridiculamente acadêmico. Pode parecer algo dito por alguém que estudou demais para justificar algo simples. Humor é essencial.
 
                         **Importante:**  
-                        - Retorne apenas um objeto JSON com as chaves `"sophisticated"` e `"complex"`.  
+                        - Retorne apenas um objeto JSON com as chaves `"complex"` e `"sophisticated"`.  
                         - Não inclua nenhum texto extra fora do JSON.  
                         - Ambas as versões devem ter o exato mesmo significado da frase original.  
                         - A complexidade e o tom absurdo devem escalar da primeira para a segunda versão.

@@ -69,6 +69,8 @@ class MemeGenerator {
 
             const phrases = JSON.parse(data.generated_text);
 
+            phrases.simple = data.input_text;
+
             this.displayImage(phrases)
 
         } catch (error) {

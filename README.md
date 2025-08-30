@@ -40,6 +40,7 @@ This project uses Terraform to manage and deploy its AWS infrastructure, includi
 2.  **Initialize Terraform:** Navigate to the project root directory where your Terraform configuration files (`.tf`) are located and initialize the backend and providers.
 
     ```bash
+    cd deploy/terraform/ 
     terraform init
     ```
 

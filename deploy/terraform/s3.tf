@@ -47,7 +47,7 @@ resource "aws_s3_bucket_ownership_controls" "project_bucket_ownership" {
   }
 }
 
-resource "aws_s3_bucket_object" "object" {
+resource "aws_s3_bucket_object" "main_js" {
   depends_on   = [aws_s3_bucket_ownership_controls.project_bucket_ownership]
   bucket       = aws_s3_bucket.project_bucket.id
   key          = "js/main.js"

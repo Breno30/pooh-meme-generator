@@ -82,6 +82,7 @@ resource "aws_s3_bucket_object" "images" {
     simple        = "../../src/app/simple.jpg"
     complex       = "../../src/app/complex.jpg"
     sophisticated = "../../src/app/sophisticated.jpg"
+    main_script   = "../../src/app/js/main.js"
   }
   depends_on   = [local_file.index_html, aws_s3_bucket_ownership_controls.project_bucket_ownership]
   bucket       = aws_s3_bucket.project_bucket.id

@@ -48,6 +48,16 @@ resource "aws_s3_bucket_ownership_controls" "project_bucket_ownership" {
 }
 
 resource "aws_s3_bucket_object" "object" {
+  depends_on   = [aws_s3_bucket_ownership_controls.project_bucket_ownership]
+  bucket       = aws_s3_bucket.project_bucket.id
+  key          = "js/main.js"
+  source       = "js/main.js"
+  etag         = filemd5("js/main.js")
+  content_type = "application/javascript"
+  acl          = "public-read"
+}
+
+resource "aws_s3_bucket_object" "object" {
   depends_on = [local_file.index_html, aws_s3_bucket_ownership_controls.project_bucket_ownership]
   bucket = aws_s3_bucket.project_bucket.id
   key    = "index.html"

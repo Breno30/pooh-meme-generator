@@ -1,6 +1,7 @@
 class MemeGenerator {
     constructor() {
         this.urlParams = new URLSearchParams(window.location.search)
+        this.initialPrompt = this.urlParams.get('prompt') || ''
         this.initializeElements()
         this.bindEvents()
         this.isGenerating = false
@@ -38,7 +39,11 @@ class MemeGenerator {
                 this.form.requestSubmit()
             }
         })
-        this.promptInput.value = this.urlParams.get('prompt')
+
+        if (this.initialPrompt) {
+            this.promptInput.value = this.initialPrompt
+            this.form.requestSubmit()
+        }
     }
 
     async handleSubmit(e) {

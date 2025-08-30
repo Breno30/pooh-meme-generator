@@ -51,7 +51,7 @@ resource "aws_s3_bucket_object" "main_js" {
   depends_on   = [aws_s3_bucket_ownership_controls.project_bucket_ownership]
   bucket       = aws_s3_bucket.project_bucket.id
   key          = "js/main.js"
-  source       = "js/main.js"
+  source       = "../../src/app/js/main.js"
   etag         = filemd5("../../src/app/js/main.js")
   content_type = "application/javascript"
   acl          = "public-read"

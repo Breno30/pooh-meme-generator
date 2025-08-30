@@ -565,7 +565,6 @@
                 this.urlParams = new URLSearchParams(window.location.search)
                 this.initializeElements()
                 this.bindEvents()
-                this.currentImageUrl = null
                 this.isGenerating = false
             }
 
@@ -654,25 +653,6 @@
 
             }
 
-            async validateImage(imageUrl) {
-                return new Promise((resolve, reject) => {
-                    const img = new Image()
-                    img.onload = () => resolve()
-                    img.onerror = () => reject(new Error('Failed to load generated image'))
-                    img.src = imageUrl
-                })
-            }
-
-            hashCode(str) {
-                let hash = 0
-                for (let i = 0; i < str.length; i++) {
-                    const char = str.charCodeAt(i)
-                    hash = ((hash << 5) - hash) + char
-                    hash = hash & hash // Convert to 32-bit integer
-                }
-                return Math.abs(hash)
-            }
-
             setLoadingState(isLoading) {
                 this.isGenerating = isLoading
                 
@@ -717,10 +697,6 @@
 
             hideImageCard() {
                 this.imageCard.classList.add('hidden')
-                if (this.currentImageUrl) {
-                    URL.revokeObjectURL(this.currentImageUrl)
-                    this.currentImageUrl = null
-                }
             }
 
             handleReset() {
@@ -795,14 +771,6 @@
         // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
             new MemeGenerator()
-        })
-
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-            const images = document.querySelectorAll('img[src^="blob:"]')
-            images.forEach(img => {
-                URL.revokeObjectURL(img.src)
-            })
         })
 
         // Add some interactive sparkle effects

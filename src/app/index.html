@@ -6,7 +6,7 @@
     <title>Image Generator</title>
     <meta name="description" content="Generate memes with AI using inspired design">
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary-blue: #4285f4;
@@ -532,7 +532,7 @@
 
             <div id="imageCard" class="image-card hidden">
                 
-                <div class="image-container">
+                <div id="imageContainer" class="image-container">
                     <div class="image-container__item">
                         <img class="container__image" src="./simple.jpg">
                         <span class="container__text" id="phrase-simple"></span>
@@ -587,13 +587,13 @@
                 this.imageCard = document.getElementById('imageCard')
                 this.generatedImage = document.getElementById('generatedImage')
                 this.imagePrompt = document.getElementById('imagePrompt')
-                // this.downloadBtn = document.getElementById('downloadBtn')
+                this.downloadBtn = document.getElementById('downloadBtn')
             }
 
             bindEvents() {
                 this.form.addEventListener('submit', (e) => this.handleSubmit(e))
                 this.resetBtn.addEventListener('click', () => this.handleReset())
-                // this.downloadBtn.addEventListener('click', () => this.handleDownload())
+                this.downloadBtn.addEventListener('click', () => this.handleDownload())
                 this.promptInput.addEventListener('input', () => this.clearError())
                 this.promptInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -738,27 +738,24 @@
             }
 
             async handleDownload() {
-                if (!this.currentImageUrl) return
+                const element = document.getElementById('imageContainer')
+                if (!element) return
 
-                try {
-                    const response = await fetch(this.currentImageUrl)
-                    const blob = await response.blob()
-                    
-                    const link = document.createElement('a')
-                    link.href = URL.createObjectURL(blob)
-                    link.download = `generated-` + Date.now() + `.png`
-                    
-                    document.body.appendChild(link)
-                    link.click()
-                    document.body.removeChild(link)
-                    
-                    // Clean up the temporary URL
-                    URL.revokeObjectURL(link.href)
-                    
-                } catch (error) {
-                    console.error('Download error:', error)
-                    this.showError('Failed to download image. Please try again.')
-                }
+                html2canvas(element).then(function(canvas) {
+                    const imageDataUrl = canvas.toDataURL('image/png');
+
+                    // Create a temporary anchor element to trigger the download
+                    const link = document.createElement('a');
+                    link.href = imageDataUrl;
+                    link.download = 'captured_div.png'; // Set the filename for the downloaded image
+
+                    // Append the link to the document body and simulate a click to trigger the download
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // Clean up by removing the temporary link from the document
+                    document.body.removeChild(link);
+                });
             }
 
             showError(message) {

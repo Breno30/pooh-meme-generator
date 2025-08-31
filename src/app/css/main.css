@@ -420,6 +420,10 @@ body {
         font-size: 1.125rem;
     }
 
+    .image-card {
+        padding: 1.5rem;
+    }
+
     .main-card {
         padding: 1.5rem;
         border-radius: 20px;
@@ -441,6 +445,14 @@ body {
 @media (max-width: 480px) {
     .title {
         font-size: 2rem;
+    }
+
+    .image-card {
+        padding: 1rem;
+    }
+
+    .main-card {
+        margin-bottom: 1rem;
     }
 
     .main-input {

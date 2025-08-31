@@ -211,6 +211,7 @@ class MemeGenerator {
         if (!element) return
 
         element.classList.remove('image-container')
+        element.style.maxWidth = '600px';
 
         html2canvas(element).then(function (canvas) {
             const imageDataUrl = canvas.toDataURL('image/png');

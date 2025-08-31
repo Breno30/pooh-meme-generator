@@ -209,6 +209,21 @@ class MemeGenerator {
             // Clean up by removing the temporary link from the document
             document.body.removeChild(link);
         });
+
+        this.downloadBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
+        </svg>
+        Image Downloaded!`;
+
+        setTimeout(() => {
+            this.downloadBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
+            </svg>
+            Download Image
+            `
+        }, 2000)
     }
 
     showError(message) {

@@ -210,7 +210,10 @@ class MemeGenerator {
         const element = document.getElementById('imageContainer')
         if (!element) return
 
-        html2canvas(element).then(function (canvas) {
+        var rawElement = element.cloneNode(true);
+        rawElement.classList.remove('image-container')
+
+        html2canvas(rawElement).then(function (canvas) {
             const imageDataUrl = canvas.toDataURL('image/png');
 
             // Create a temporary anchor element to trigger the download

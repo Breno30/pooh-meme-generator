@@ -210,10 +210,9 @@ class MemeGenerator {
         const element = document.getElementById('imageContainer')
         if (!element) return
 
-        var rawElement = element.cloneNode(true);
-        rawElement.classList.remove('image-container')
+        element.classList.remove('image-container')
 
-        html2canvas(rawElement).then(function (canvas) {
+        html2canvas(element).then(function (canvas) {
             const imageDataUrl = canvas.toDataURL('image/png');
 
             // Create a temporary anchor element to trigger the download
@@ -228,6 +227,8 @@ class MemeGenerator {
             // Clean up by removing the temporary link from the document
             document.body.removeChild(link);
         });
+
+        element.classList.add('image-container')
 
         this.downloadBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

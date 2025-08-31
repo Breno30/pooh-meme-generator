@@ -6,6 +6,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "A unique name for the project, used as a prefix for naming resources (e.g., 'my-app')."
   type        = string
+  default     = "pooh-meme-generator"
 }
 
 variable "lambda_memory_size" {

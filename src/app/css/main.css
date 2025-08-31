@@ -448,6 +448,10 @@ body {
         font-size: 2rem;
     }
 
+    .container__image {
+        height: inherit;
+    }
+
     .image-card {
         padding: 1rem;
     }

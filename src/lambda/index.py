@@ -2,6 +2,10 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 
+# --- Environment Variables ---
+MODEL_ID = os.environ.get('MODEL_ID', 'anthropic.claude-3-haiku-20240307-v1:0')
+AWS_REGION = os.environ.get('AWS_REGION', 'us-east-1')
+
 def lambda_handler(event, context):
     cors_headers = {
         'Access-Control-Allow-Origin': '*',
@@ -66,10 +70,6 @@ def lambda_handler(event, context):
             }) 
         }
 
-    # --- 2. Invoke the Bedrock model ---
-    # model_id = "anthropic.claude-3-sonnet-20240229-v1:0"
-    model_id = "anthropic.claude-3-haiku-20240307-v1:0"
-
     # Create a Bedrock Runtime client
     try:
         bedrock_runtime_client = boto3.client(
@@ -119,7 +119,7 @@ def lambda_handler(event, context):
     try:
         # Invoke the model
         response = bedrock_runtime_client.invoke_model(
-            modelId=model_id,
+            modelId=MODEL_ID,
             body=payload,
             contentType='application/json',
             accept='application/json'

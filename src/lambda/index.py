@@ -4,7 +4,7 @@ from botocore.exceptions import ClientError
 
 # --- Environment Variables ---
 MODEL_ID = os.environ.get('MODEL_ID')
-AWS_REGION = os.environ.get('AWS_REGION')
+APP_REGION = os.environ.get('APP_REGION')
 TABLE_NAME = os.environ.get('TABLE_NAME')
 
 def lambda_handler(event, context):
@@ -49,7 +49,7 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': f'An error occurred while parsing the input: {str(e)}'})
         }
 
-    dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+    dynamodb = boto3.resource('dynamodb', region_name=APP_REGION)
     table = dynamodb.Table(TABLE_NAME)
 
     response = table.get_item(
@@ -75,7 +75,7 @@ def lambda_handler(event, context):
     try:
         bedrock_runtime_client = boto3.client(
             service_name='bedrock-runtime',
-            region_name=AWS_REGION
+            region_name=APP_REGION
         )
     except Exception as e:
         return {

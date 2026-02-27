@@ -48,7 +48,7 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': f'An error occurred while parsing the input: {str(e)}'})
         }
 
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
     table = dynamodb.Table('${table_name}')
 
     response = table.get_item(
@@ -74,7 +74,7 @@ def lambda_handler(event, context):
     try:
         bedrock_runtime_client = boto3.client(
             service_name='bedrock-runtime',
-            region_name='us-east-1'
+            region_name=AWS_REGION
         )
     except Exception as e:
         return {

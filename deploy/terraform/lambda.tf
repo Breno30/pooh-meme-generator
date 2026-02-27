@@ -1,9 +1,7 @@
 resource "local_file" "lambda_code" {
   filename = "index.py"
 
-  content = templatefile("../../src/lambda/index.py", {
-    table_name = aws_dynamodb_table.project_table.name
-  })
+  content = templatefile("../../src/lambda/index.py")
 }
 
 data "archive_file" "lambda" {
@@ -26,6 +24,7 @@ resource "aws_lambda_function" "service_lambda_function" {
   environment {
     variables = {
       AWS_REGION = "${var.aws_region}"
+      TABLE_NAME = local.dynamodb_table_name
     }
   }
 

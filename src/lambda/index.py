@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError
 # --- Environment Variables ---
 MODEL_ID = os.environ.get('MODEL_ID', 'anthropic.claude-3-haiku-20240307-v1:0')
 AWS_REGION = os.environ.get('AWS_REGION', 'us-east-1')
+TABLE_NAME = os.environ.get('TABLE_NAME')
 
 def lambda_handler(event, context):
     cors_headers = {
@@ -49,7 +50,7 @@ def lambda_handler(event, context):
         }
 
     dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
-    table = dynamodb.Table('${table_name}')
+    table = dynamodb.Table(TABLE_NAME)
 
     response = table.get_item(
         Key={

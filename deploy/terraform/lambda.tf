@@ -22,6 +22,13 @@ resource "aws_lambda_function" "service_lambda_function" {
   runtime       = "python3.12"
   memory_size   = var.lambda_memory_size
   timeout       = var.lambda_timeout
+
+  environment {
+    variables = {
+      AWS_REGION = "${var.aws_region}"
+    }
+  }
+
 }
 
 resource "aws_lambda_function_url" "lambda_function_url" {

@@ -2,6 +2,11 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 
+# --- Environment Variables ---
+MODEL_ID = os.environ.get('MODEL_ID')
+APP_REGION = os.environ.get('APP_REGION')
+TABLE_NAME = os.environ.get('TABLE_NAME')
+
 def lambda_handler(event, context):
     cors_headers = {
         'Access-Control-Allow-Origin': '*',
@@ -44,8 +49,8 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': f'An error occurred while parsing the input: {str(e)}'})
         }
 
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-    table = dynamodb.Table('${table_name}')
+    dynamodb = boto3.resource('dynamodb', region_name=APP_REGION)
+    table = dynamodb.Table(TABLE_NAME)
 
     response = table.get_item(
         Key={
@@ -66,15 +71,11 @@ def lambda_handler(event, context):
             }) 
         }
 
-    # --- 2. Invoke the Bedrock model ---
-    # model_id = "anthropic.claude-3-sonnet-20240229-v1:0"
-    model_id = "anthropic.claude-3-haiku-20240307-v1:0"
-
     # Create a Bedrock Runtime client
     try:
         bedrock_runtime_client = boto3.client(
             service_name='bedrock-runtime',
-            region_name='us-east-1'
+            region_name=APP_REGION
         )
     except Exception as e:
         return {
@@ -119,7 +120,7 @@ def lambda_handler(event, context):
     try:
         # Invoke the model
         response = bedrock_runtime_client.invoke_model(
-            modelId=model_id,
+            modelId=MODEL_ID,
             body=payload,
             contentType='application/json',
             accept='application/json'

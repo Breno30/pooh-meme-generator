@@ -33,6 +33,7 @@ This project uses Terraform to manage and deploy its AWS infrastructure, includi
     ```bash
     export TF_VAR_aws_region="us-east-1"
     export TF_VAR_project_name="pooh-meme" # Example project name
+    export TF_VAR_model_id="anthropic.claude-3-haiku-20240307-v1:0"
     export TF_VAR_lambda_memory_size=512
     export TF_VAR_lambda_timeout=10
     ```

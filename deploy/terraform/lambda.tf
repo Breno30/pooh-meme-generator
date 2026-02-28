@@ -1,15 +1,6 @@
-resource "local_file" "lambda_code" {
-  filename = "index.py"
-
-  content = templatefile("../../src/lambda/index.py", {
-    table_name = aws_dynamodb_table.project_table.name
-  })
-}
-
 data "archive_file" "lambda" {
-  depends_on  = [local_file.lambda_code]
   type        = "zip"
-  source_file = "index.py"
+  source_file = "../../src/lambda/index.py"
   output_path = "${path.module}/lambda.zip"
 }
 
@@ -22,6 +13,15 @@ resource "aws_lambda_function" "service_lambda_function" {
   runtime       = "python3.12"
   memory_size   = var.lambda_memory_size
   timeout       = var.lambda_timeout
+
+  environment {
+    variables = {
+      APP_REGION = "${var.aws_region}"
+      TABLE_NAME = local.dynamodb_table_name
+      MODEL_ID = var.model_id
+    }
+  }
+
 }
 
 resource "aws_lambda_function_url" "lambda_function_url" {

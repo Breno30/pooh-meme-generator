@@ -84,38 +84,64 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': f'Failed to create Bedrock Runtime client: {str(e)}'})
         }
 
-    # Prepare the payload for the Bedrock model. This format is specific to the model.
-    # The example below is for Anthropic Claude.
-    payload = json.dumps({
-        "anthropic_version": "bedrock-2023-05-31",
-        "messages": [
+    # Define the tool schema for structured JSON output
+    tool_config = {
+        "tools": [
             {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"""
-                        Dada a frase original: '{input_text}', reescreva-a em duas versões crescentemente formais e cômicas, mantendo o mesmo significado:
-
-                        1. **"complex"**:  
-                        Reformule a frase de maneira formal, elegante e levemente pomposa, como se estivesse tentando parecer sério e educado. Use vocabulário culto, mas ainda compreensível.
-
-                        2. **"sophisticated"**:  
-                        Transforme a frase em algo deliberadamente exagerado, pseudo-filosófico, cheio de palavras longas, construções rebuscadas e um tom ridiculamente acadêmico. Pode parecer algo dito por alguém que estudou demais para justificar algo simples. Humor é essencial.
-
-                        **Importante:**  
-                        - Retorne apenas um objeto JSON com as chaves `"complex"` e `"sophisticated"`.  
-                        - Não inclua nenhum texto extra fora do JSON.  
-                        - Ambas as versões devem ter o exato mesmo significado da frase original.  
-                        - A complexidade e o tom absurdo devem escalar da primeira para a segunda versão.
-                        """
+                "toolSpec": {
+                    "name": "rewrite_output",
+                    "description": "Returns the rewritten sentence in two increasingly formal and comedic versions.",
+                    "inputSchema": {
+                        "json": {
+                            "type": "object",
+                            "properties": {
+                                "complex": {
+                                    "type": "string",
+                                    "description": "Formal, elegant, slightly pompous version."
+                                },
+                                "sophisticated": {
+                                    "type": "string",
+                                    "description": "Exaggerated, pseudo-philosophical, absurd academic version."
+                                }
+                            },
+                            "required": ["complex", "sophisticated"]
+                        }
                     }
-                ]
+                }
             }
         ],
+        "toolChoice": {
+            "tool": {
+                "name": "rewrite_output"
+            }
+        }
+    }
+
+    # Prepare messages separately (no JSON instruction needed anymore)
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "text": f"""
+                    Dada a frase original: '{input_text}', reescreva-a em duas versões crescentemente formais e cômicas, mantendo o mesmo significado:
+
+                    1. Primeira versão: formal, elegante e levemente pomposa.
+                    2. Segunda versão: deliberadamente exagerada, pseudo-filosófica e absurdamente acadêmica.
+
+                    A segunda deve ser claramente mais exagerada que a primeira.
+                    """
+                }
+            ]
+        }
+    ]
+
+    payload = {
+        "anthropic_version": "bedrock-2023-05-31",
+        "messages": messages,
         "max_tokens": 512,
         "temperature": 1
-    })
+    }
 
     try:
         # Invoke the model

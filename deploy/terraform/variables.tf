@@ -21,3 +21,9 @@ variable "lambda_timeout" {
   type        = number
   default     = 10 # Default to 10 seconds
 }
+
+variable "model_id" {
+  description = "The ID of the model to use for generating memes (e.g., 'anthropic.claude-3-haiku-20240307-v1:0')."
+  type        = string
+  default     = "anthropic.claude-3-haiku-20240307-v1:0"
+}

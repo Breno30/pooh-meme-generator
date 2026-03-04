@@ -1,11 +1,13 @@
 import json
 import boto3
+import os
 from botocore.exceptions import ClientError
 
 # --- Environment Variables ---
 MODEL_ID = os.environ.get('MODEL_ID')
 APP_REGION = os.environ.get('APP_REGION')
 TABLE_NAME = os.environ.get('TABLE_NAME')
+DYNAMO_DB_CACHE = os.environ.get('DYNAMO_DB_CACHE', 'true').lower() == 'true'
 
 def lambda_handler(event, context):
     cors_headers = {
@@ -49,27 +51,29 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': f'An error occurred while parsing the input: {str(e)}'})
         }
 
-    dynamodb = boto3.resource('dynamodb', region_name=APP_REGION)
-    table = dynamodb.Table(TABLE_NAME)
+    if DYNAMO_DB_CACHE:
+        dynamodb = boto3.resource('dynamodb', region_name=APP_REGION)
+        table = dynamodb.Table(TABLE_NAME)
 
-    response = table.get_item(
-        Key={
-            'input_text': input_text
-        }
-    )
+        response = table.get_item(
+            Key={
+                'input_text': input_text
+            }
+        )
+        
 
-    if response is not None and 'Item' in response:
-        item = response.get('Item')
-        generated_text = item.get('generated_text')
+        if response is not None and 'Item' in response:
+            item = response.get('Item')
+            generated_text = item.get('generated_text')
 
-        return {
-            'statusCode': 200,
-            'headers': cors_headers,
-            'body': json.dumps({
-                'input_text': input_text,
-                'generated_text': generated_text
-            }) 
-        }
+            return {
+                'statusCode': 200,
+                'headers': cors_headers,
+                'body': json.dumps({
+                    'input_text': input_text,
+                    'generated_text': generated_text
+                }) 
+            }
 
     # Create a Bedrock Runtime client
     try:
@@ -134,12 +138,13 @@ def lambda_handler(event, context):
         # This is specific to Anthropic Claude.
         generated_text = response_body['content'][0]['text']
 
-        table.put_item(
-            Item={
-                'input_text': input_text,
-                'generated_text': generated_text
-            }
-        )
+        if DYNAMO_DB_CACHE:
+            table.put_item(
+                Item={
+                    'input_text': input_text,
+                    'generated_text': generated_text
+                }
+            )
 
         # --- 4. Return the output ---
         return {

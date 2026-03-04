@@ -1,6 +1,6 @@
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "../../src/lambda/index.py"
+  source_file = "../../src/lambda/pooh_meme_generator/app.py"
   output_path = "${path.module}/lambda.zip"
 }
 
@@ -9,7 +9,7 @@ resource "aws_lambda_function" "service_lambda_function" {
   filename      = "lambda.zip"
   function_name = local.lambda_function_name
   role          = aws_iam_role.lambda_execution_role.arn
-  handler       = "index.lambda_handler"
+  handler       = "app.lambda_handler"
   runtime       = "python3.12"
   memory_size   = var.lambda_memory_size
   timeout       = var.lambda_timeout

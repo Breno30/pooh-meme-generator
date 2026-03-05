@@ -2,14 +2,14 @@ resource "aws_iam_role" "lambda_execution_role" {
   name = local.iam_role_name
 
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Effect": "Allow",
-        "Principal": {
-          "Service": "lambda.amazonaws.com"
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "lambda.amazonaws.com"
         },
-        "Action": "sts:AssumeRole"
+        "Action" : "sts:AssumeRole"
       }
     ]
   })
@@ -18,12 +18,12 @@ resource "aws_iam_role" "lambda_execution_role" {
 resource "aws_iam_policy" "bedrock_invoke_policy" {
   name        = local.iam_policy_name
   description = "Allow Lambda to invoke Bedrock foundation models and access DynamoDB"
-  policy      = jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow",
-        Action = "bedrock:InvokeModel",
+        Effect   = "Allow",
+        Action   = "bedrock:InvokeModel",
         Resource = "arn:aws:bedrock:${var.aws_region}::foundation-model/*"
       },
       {

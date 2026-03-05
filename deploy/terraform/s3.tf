@@ -22,19 +22,19 @@ resource "aws_s3_bucket_public_access_block" "public_access_block" {
 }
 
 resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
-  bucket = aws_s3_bucket.project_bucket.id
+  bucket     = aws_s3_bucket.project_bucket.id
   depends_on = [aws_s3_bucket_public_access_block.public_access_block]
 
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
-        {
-          Sid = "PublicReadGetObject",
-          Effect = "Allow",
-          Principal = "*",
-          Action = "s3:GetObject",
-          Resource = "${aws_s3_bucket.project_bucket.arn}/*"
-        }
+      {
+        Sid       = "PublicReadGetObject",
+        Effect    = "Allow",
+        Principal = "*",
+        Action    = "s3:GetObject",
+        Resource  = "${aws_s3_bucket.project_bucket.arn}/*"
+      }
     ]
   })
 }
@@ -68,24 +68,24 @@ resource "aws_s3_bucket_object" "main_css" {
 }
 
 resource "aws_s3_bucket_object" "object" {
-  depends_on = [local_file.index_html, aws_s3_bucket_ownership_controls.project_bucket_ownership]
-  bucket = aws_s3_bucket.project_bucket.id
-  key    = "index.html"
-  source = "temp/index.html"
-  etag = filemd5("../../src/app/index.html")
+  depends_on   = [local_file.index_html, aws_s3_bucket_ownership_controls.project_bucket_ownership]
+  bucket       = aws_s3_bucket.project_bucket.id
+  key          = "index.html"
+  source       = "temp/index.html"
+  etag         = filemd5("../../src/app/index.html")
   content_type = "text/html"
-  acl    = "public-read"
+  acl          = "public-read"
 }
 
 resource "aws_s3_bucket_object" "images" {
-  for_each    = toset(["simple.jpg", "complex.jpg", "sophisticated.jpg"])
-  depends_on  = [aws_s3_bucket_ownership_controls.project_bucket_ownership]
-  bucket      = aws_s3_bucket.project_bucket.id
-  key         = "images/${each.value}"
-  source      = "../../src/app/images/${each.value}"
-  etag        = filemd5("../../src/app/images/${each.value}")
+  for_each     = toset(["simple.jpg", "complex.jpg", "sophisticated.jpg"])
+  depends_on   = [aws_s3_bucket_ownership_controls.project_bucket_ownership]
+  bucket       = aws_s3_bucket.project_bucket.id
+  key          = "images/${each.value}"
+  source       = "../../src/app/images/${each.value}"
+  etag         = filemd5("../../src/app/images/${each.value}")
   content_type = "image/jpeg"
-  acl         = "public-read"
+  acl          = "public-read"
 }
 
 resource "aws_s3_bucket_website_configuration" "project_website" {

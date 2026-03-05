@@ -5,7 +5,7 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_lambda_function" "service_lambda_function" {
-  depends_on = [data.archive_file.lambda]
+  depends_on    = [data.archive_file.lambda]
   filename      = "temp/lambda.zip"
   function_name = local.lambda_function_name
   role          = aws_iam_role.lambda_execution_role.arn
@@ -18,13 +18,13 @@ resource "aws_lambda_function" "service_lambda_function" {
     variables = {
       APP_REGION = "${var.aws_region}"
       TABLE_NAME = local.dynamodb_table_name
-      MODEL_ID = var.model_id
+      MODEL_ID   = var.model_id
     }
   }
 
 }
 
 resource "aws_lambda_function_url" "lambda_function_url" {
-  function_name = aws_lambda_function.service_lambda_function.function_name
-  authorization_type = "NONE" 
+  function_name      = aws_lambda_function.service_lambda_function.function_name
+  authorization_type = "NONE"
 }

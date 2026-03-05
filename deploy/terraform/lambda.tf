@@ -1,12 +1,12 @@
 data "archive_file" "lambda" {
   type        = "zip"
   source_file = "../../src/lambda/pooh_meme_generator/app.py"
-  output_path = "${path.module}/lambda.zip"
+  output_path = "${path.module}/temp/lambda.zip"
 }
 
 resource "aws_lambda_function" "service_lambda_function" {
   depends_on = [data.archive_file.lambda]
-  filename      = "lambda.zip"
+  filename      = "temp/lambda.zip"
   function_name = local.lambda_function_name
   role          = aws_iam_role.lambda_execution_role.arn
   handler       = "app.lambda_handler"

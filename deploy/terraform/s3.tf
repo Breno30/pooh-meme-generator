@@ -1,6 +1,6 @@
 # Rendered HTML file
 resource "local_file" "index_html" {
-  filename = "index.html"
+  filename = "temp/index.html"
 
   content = templatefile("../../src/app/index.html", {
     lambda_function_endpoint = aws_lambda_function_url.lambda_function_url.function_url
@@ -71,7 +71,7 @@ resource "aws_s3_bucket_object" "object" {
   depends_on = [local_file.index_html, aws_s3_bucket_ownership_controls.project_bucket_ownership]
   bucket = aws_s3_bucket.project_bucket.id
   key    = "index.html"
-  source = "index.html"
+  source = "temp/index.html"
   etag = filemd5("../../src/app/index.html")
   content_type = "text/html"
   acl    = "public-read"

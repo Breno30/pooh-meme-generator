@@ -8,6 +8,7 @@ resource "aws_lambda_function" "service_lambda_function" {
   depends_on    = [data.archive_file.lambda]
   filename      = "temp/lambda.zip"
   function_name = local.lambda_function_name
+  source_code_hash = data.archive_file.lambda.output_base64sha256
   role          = aws_iam_role.lambda_execution_role.arn
   handler       = "app.lambda_handler"
   runtime       = "python3.12"

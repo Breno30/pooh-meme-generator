@@ -3,8 +3,6 @@ import boto3
 import os
 from botocore.exceptions import ClientError
 
-
-
 # --- Environment Variables ---
 MODEL_ID = os.environ.get('MODEL_ID')
 APP_REGION = os.environ.get('APP_REGION')

@@ -21,7 +21,9 @@ Resources:
         - x86_64
       Environment:
         Variables:
-           MODEL_ID: "anthropic.claude-3-haiku-20240307-v1:0"
+           MODEL_ID: "gpt-5-nano" # Replace with your actual model ID anthropic.claude-3-haiku-20240307-v1:0 | gpt-5-nano
+           PROVIDER: "openai" # bedrock | openai
+           OPENAI_API_KEY: "openai_api_key_placeholder" # Replace with your actual OpenAI API key
            APP_REGION: "us-east-1"
            TABLE_NAME: "pooh-meme-generator-table"
            DYNAMO_DB_CACHE: "false"

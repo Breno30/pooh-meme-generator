@@ -1,12 +1,16 @@
 import json
 import boto3
 import os
+import requests
 from botocore.exceptions import ClientError
 
 # --- Environment Variables ---
 MODEL_ID = os.environ.get('MODEL_ID')
 APP_REGION = os.environ.get('APP_REGION')
 TABLE_NAME = os.environ.get('TABLE_NAME')
+PROVIDER = os.environ.get("PROVIDER", "bedrock")  # bedrock | openai
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5-nano")
 DYNAMO_DB_CACHE = os.environ.get('DYNAMO_DB_CACHE', 'true').lower() == 'true'
 
 def lambda_handler(event, context):
@@ -44,13 +48,8 @@ def lambda_handler(event, context):
             'headers': cors_headers, # Add CORS headers to error response
             'body': json.dumps({'error': 'Invalid JSON format in the request body.'})
         }
-    except Exception as e:
-        return {
-            'statusCode': 500,
-            'headers': cors_headers, # Add CORS headers to error response
-            'body': json.dumps({'error': f'An error occurred while parsing the input: {str(e)}'})
-        }
 
+    # --- DynamoDB Cache Check ---
     if DYNAMO_DB_CACHE:
         dynamodb = boto3.resource('dynamodb', region_name=APP_REGION)
         table = dynamodb.Table(TABLE_NAME)
@@ -60,11 +59,11 @@ def lambda_handler(event, context):
                 'input_text': input_text
             }
         )
-        
 
-        if response is not None and 'Item' in response:
-            item = response.get('Item')
-            generated_text = item.get('generated_text')
+        if response and 'Item' in response:
+
+            item = response['Item']
+            generated_text = item['generated_text']
 
             return {
                 'statusCode': 200,
@@ -75,99 +74,106 @@ def lambda_handler(event, context):
                 }) 
             }
 
-    # Create a Bedrock Runtime client
+    # --- Prompt ---
+    prompt = f"""
+Dada a frase original: '{input_text}', reescreva-a em duas versões crescentemente formais e cômicas, mantendo o mesmo significado:
+
+1. "complex":
+Reformule a frase de maneira formal, elegante e levemente pomposa.
+
+2. "sophisticated":
+Transforme a frase em algo exagerado, pseudo-filosófico e absurdamente acadêmico.
+
+Importante:
+- Retorne apenas um objeto JSON com "complex" e "sophisticated"
+- Não inclua texto fora do JSON
+"""
+
+    # --- Call Provider ---
     try:
-        bedrock_runtime_client = boto3.client(
-            service_name='bedrock-runtime',
-            region_name=APP_REGION
-        )
-    except Exception as e:
-        return {
-            'statusCode': 500,
-            'headers': cors_headers, # Add CORS headers to error response
-            'body': json.dumps({'error': f'Failed to create Bedrock Runtime client: {str(e)}'})
-        }
 
-    # Prepare the payload for the Bedrock model. This format is specific to the model.
-    # The example below is for Anthropic Claude.
-    payload = json.dumps({
-        "anthropic_version": "bedrock-2023-05-31",
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"""
-                        Dada a frase original: '{input_text}', reescreva-a em duas versões crescentemente formais e cômicas, mantendo o mesmo significado:
+        if PROVIDER == "openai":
 
-                        1. **"complex"**:  
-                        Reformule a frase de maneira formal, elegante e levemente pomposa, como se estivesse tentando parecer sério e educado. Use vocabulário culto, mas ainda compreensível.
-
-                        2. **"sophisticated"**:  
-                        Transforme a frase em algo deliberadamente exagerado, pseudo-filosófico, cheio de palavras longas, construções rebuscadas e um tom ridiculamente acadêmico. Pode parecer algo dito por alguém que estudou demais para justificar algo simples. Humor é essencial.
-
-                        **Importante:**  
-                        - Retorne apenas um objeto JSON com as chaves `"complex"` e `"sophisticated"`.  
-                        - Não inclua nenhum texto extra fora do JSON.  
-                        - Ambas as versões devem ter o exato mesmo significado da frase original.  
-                        - A complexidade e o tom absurdo devem escalar da primeira para a segunda versão.
-                        """
-                    }
-                ]
-            }
-        ],
-        "max_tokens": 512,
-        "temperature": 1
-    })
-
-    try:
-        # Invoke the model
-        response = bedrock_runtime_client.invoke_model(
-            modelId=MODEL_ID,
-            body=payload,
-            contentType='application/json',
-            accept='application/json'
-        )
-
-        # --- 3. Process the response from Bedrock ---
-        # The response body is a streaming payload, so we read it.
-        response_body = json.loads(response['body'].read())
-
-        # Extract the text from the response based on the model's output format.
-        # This is specific to Anthropic Claude.
-        generated_text = response_body['content'][0]['text']
-
-        if DYNAMO_DB_CACHE:
-            table.put_item(
-                Item={
-                    'input_text': input_text,
-                    'generated_text': generated_text
+            response = requests.post(
+                "https://api.openai.com/v1/responses",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {OPENAI_API_KEY}"
+                },
+                json={
+                    "model": OPENAI_MODEL,
+                    "input": prompt,
+                    "temperature": 1
                 }
             )
 
-        # --- 4. Return the output ---
-        return {
-            'statusCode': 200,
-            'headers': cors_headers, # Use the defined CORS headers
-            'body': json.dumps({
-                'input_text': input_text,
-                'generated_text': generated_text
+            data = response.json()
+
+            generated_text = data["output"][1]["content"][0]["text"]
+
+        else:  # Bedrock
+
+            bedrock_runtime_client = boto3.client(
+                service_name='bedrock-runtime',
+                region_name=APP_REGION
+            )
+
+            # Prepare the payload for the Bedrock model. This format is specific to the model.
+            # The example below is for Anthropic Claude.
+            payload = json.dumps({
+                "anthropic_version": "bedrock-2023-05-31",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": prompt}
+                        ]
+                    }
+                ],
+                "max_tokens": 512,
+                "temperature": 1
             })
+
+            # Invoke the model
+            response = bedrock_runtime_client.invoke_model(
+                modelId=MODEL_ID,
+                body=payload,
+                contentType='application/json',
+                accept='application/json'
+            )
+
+            # --- 3. Process the response from Bedrock ---
+            # The response body is a streaming payload, so we read it.
+            response_body = json.loads(response['body'].read())
+
+            # Extract the text from the response based on the model's output format.
+            # This is specific to Anthropic Claude.
+            generated_text = response_body['content'][0]['text']
+
+    except Exception as e:
+
+        return {
+            'statusCode': 500,
+            'headers': cors_headers,
+            'body': json.dumps({'error': str(e)})
         }
 
-    except ClientError as e:
-        error_message = e.response['Error']['Message']
-        print(f"Bedrock API error: {error_message}")
-        return {
-            'statusCode': 500,
-            'headers': cors_headers, # Add CORS headers to error response
-            'body': json.dumps({'error': f'Bedrock API error: {error_message}'})
-        }
-    except Exception as e:
-        print(f"An unexpected error occurred: {str(e)}")
-        return {
-            'statusCode': 500,
-            'headers': cors_headers, # Add CORS headers to error response
-            'body': json.dumps({'error': f'An unexpected error occurred: {str(e)}'})
-        }
+    # --- Store Cache ---
+    if DYNAMO_DB_CACHE:
+        table.put_item(
+            Item={
+                'input_text': input_text,
+                'generated_text': generated_text
+            }
+        )
+
+    # --- 4. Return the output ---
+    return {
+        'statusCode': 200,
+        'headers': cors_headers,
+        'body': json.dumps({
+            'input_text': input_text,
+            'generated_text': generated_text,
+            'provider': PROVIDER
+        })
+    }

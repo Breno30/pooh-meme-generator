@@ -28,7 +28,7 @@ variable "model_id" {
   default     = "anthropic.claude-3-haiku-20240307-v1:0"
 }
 
-variable "provider" {
+variable "model_provider" {
   description = "The provider to use for the model (e.g., 'bedrock, openai')."
   type        = string
   default     = "bedrock"

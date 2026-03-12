@@ -26,7 +26,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> $GITHUB_ENV
           echo "TF_VAR_model_id=${{ secrets.MODEL_ID }}" >> $GITHUB_ENV
-          echo "TF_VAR_provider=${{ secrets.PROVIDER }}" >> $GITHUB_ENV
+          echo "TF_VAR_model_provider=${{ secrets.PROVIDER }}" >> $GITHUB_ENV
           echo "TF_VAR_openai_api_key=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
 
       - name: Terraform Init

@@ -33,3 +33,9 @@ variable "model_provider" {
   type        = string
   default     = "bedrock"
 }
+
+variable "openai_api_key" {
+  description = "The API key for OpenAI, required if using OpenAI as the model provider."
+  type        = string
+  default     = ""
+}

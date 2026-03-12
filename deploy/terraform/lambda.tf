@@ -21,6 +21,7 @@ resource "aws_lambda_function" "service_lambda_function" {
       TABLE_NAME = local.dynamodb_table_name
       MODEL_ID   = var.model_id
       PROVIDER   = var.provider
+      OPENAI_API_KEY = var.openai_api_key
     }
   }
 

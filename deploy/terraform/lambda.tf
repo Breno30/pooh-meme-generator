@@ -20,6 +20,7 @@ resource "aws_lambda_function" "service_lambda_function" {
       APP_REGION = "${var.aws_region}"
       TABLE_NAME = local.dynamodb_table_name
       MODEL_ID   = var.model_id
+      PROVIDER   = var.provider
     }
   }
 

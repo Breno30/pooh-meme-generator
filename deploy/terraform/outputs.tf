@@ -12,3 +12,8 @@ output "website_url" {
   value       = aws_s3_bucket_website_configuration.project_website.website_endpoint
   description = "The public URL of the static website hosted on S3."
 }
+
+output "cloudfront_domain_name" {
+  value       = aws_cloudfront_distribution.s3_distribution.domain_name
+  description = "The domain name of the CloudFront distribution for the S3 bucket."
+}

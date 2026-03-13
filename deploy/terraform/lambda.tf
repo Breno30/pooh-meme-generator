@@ -25,6 +25,18 @@ resource "aws_lambda_function" "service_lambda_function" {
     }
   }
 
+  layers = [
+    aws_lambda_layer_version.requests_layer.arn
+  ]
+
+}
+
+resource "aws_lambda_layer_version" "requests_layer" {
+  layer_name               = "requests"
+  compatible_runtimes      = ["python3.12", "python3.11", "python3.10"]
+  filename                 = "src/layers/requests.zip"
+  description              = "Requests library for Python Lambda"
+  compatible_architectures = ["x86_64", "arm64"]
 }
 
 resource "aws_lambda_function_url" "lambda_function_url" {

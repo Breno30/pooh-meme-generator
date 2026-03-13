@@ -30,12 +30,4 @@ resource "aws_lambda_function" "service_lambda_function" {
 resource "aws_lambda_function_url" "lambda_function_url" {
   function_name      = aws_lambda_function.service_lambda_function.function_name
   authorization_type = "NONE"
-
-  cors {
-    allow_origins  = ["*"]
-    allow_methods  = ["*"]
-    allow_headers  = ["*"]
-    expose_headers = []
-    max_age        = 86400
-  }
 }

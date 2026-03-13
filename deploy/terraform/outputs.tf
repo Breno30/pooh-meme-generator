@@ -13,7 +13,7 @@ output "website_url" {
   description = "The public URL of the static website hosted on S3."
 }
 
-output "cloudfront_domain_name" {
-  value       = aws_cloudfront_distribution.s3_distribution.domain_name
+output "cloudfront_url" {
+  value       = "https://${aws_cloudfront_distribution.s3_distribution.domain_name}"
   description = "The domain name of the CloudFront distribution for the S3 bucket."
 }

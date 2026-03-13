@@ -8,7 +8,7 @@ output "lambda_function_url" {
   description = "The URL endpoint for the deployed Lambda function."
 }
 
-output "website_url" {
+output "s3_bucket_url" {
   value       = aws_s3_bucket_website_configuration.project_website.website_endpoint
   description = "The public URL of the static website hosted on S3."
 }

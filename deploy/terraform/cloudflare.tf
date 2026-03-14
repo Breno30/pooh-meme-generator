@@ -7,6 +7,6 @@ resource "cloudflare_dns_record" "cname_app" {
   name    = "meme"
   type    = "CNAME"
   content = "https://${aws_cloudfront_distribution.s3_distribution.domain_name}"
-  ttl     = 3600
+  ttl     = 1
   proxied = true
 }

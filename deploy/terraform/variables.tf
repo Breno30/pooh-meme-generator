@@ -39,3 +39,15 @@ variable "openai_api_key" {
   type        = string
   default     = ""
 }
+
+variable "cloudflare_api_token" {
+  description = "The API token for Cloudflare, required for managing DNS records."
+  type        = string
+  default     = ""
+}
+
+variable "cloudflare_zone_id" {
+  description = "The Zone ID for the Cloudflare domain where the CNAME record will be created."
+  type        = string
+  default     = ""
+}

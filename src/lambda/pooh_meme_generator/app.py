@@ -110,6 +110,7 @@ Importante:
             data = response.json()
 
             generated_text = data["output"][1]["content"][0]["text"]
+            generated_text = generated_text.replace("```json", "").replace("```", "").strip()
 
         else:  # Bedrock
 
